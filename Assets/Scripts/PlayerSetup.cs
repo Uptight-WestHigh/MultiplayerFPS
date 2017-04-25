@@ -13,6 +13,15 @@ public class PlayerSetup : NetworkBehaviour {
     [SerializeField]
     private TextMesh nameTag;
 
+    [SerializeField]
+    string dontDrawLayerName = "DontDraw";
+    [SerializeField]
+    GameObject[] playerGraphics;
+
+    [SerializeField]
+    GameObject playerUIPrefab;
+    private GameObject playerUIInstance;
+
     Camera sceneCamera;
 
     void Start()
@@ -29,8 +38,26 @@ public class PlayerSetup : NetworkBehaviour {
             {
                 sceneCamera.gameObject.SetActive(false);
             }
+
+            // Disable player graphics for local player
+            SetLayerRecursively(playerGraphics, LayerMask.NameToLayer(dontDrawLayerName));
+
+            // Create PlayerUI
+            playerUIInstance = Instantiate(playerUIPrefab);
+            playerUIInstance.name = playerUIPrefab.name;
+
         }
 
+        GetComponent<Player>().Setup();
+
+    }
+
+    void SetLayerRecursively(GameObject[] obj, int newLayer)
+    {
+        for (int i = 0; i < obj.Length; i++)
+        {
+            obj[i].layer = newLayer;
+        }
     }
 
     public override void OnStartClient()
@@ -59,6 +86,9 @@ public class PlayerSetup : NetworkBehaviour {
 
     void OnDisable()
     {
+        Destroy(playerUIInstance);
+
+        // Re-enable the scene camera
         if (sceneCamera != null)
         {
             sceneCamera.gameObject.SetActive(true);
