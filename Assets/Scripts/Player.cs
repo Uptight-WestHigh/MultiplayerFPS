@@ -1,8 +1,13 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 using System.Collections;
 
 public class Player : NetworkBehaviour {
+
+    [SerializeField]
+    GameObject playerDeadPrefab;
+    private GameObject playerDeadInstance;
 
     [SyncVar]
     private bool _isDead = false;
@@ -17,6 +22,11 @@ public class Player : NetworkBehaviour {
 
     [SyncVar]
     private int currentHealth;
+
+    public float GetHealthAmount()
+    {
+        return currentHealth;
+    }
 
     [SerializeField]
     private Behaviour[] disableOnDeath;
@@ -45,12 +55,20 @@ public class Player : NetworkBehaviour {
          if (transform.position.y< -5f)
          {
             if (!isDead)
+            {
                 Die();
+                // Added by me
+                if (playerDeadInstance != null)
+                    Destroy(playerDeadInstance);
+                playerDeadInstance = Instantiate(playerDeadPrefab);
+                playerDeadInstance.GetComponent<Text>().text = "\n\n" + transform.name + " fell off the map!";
+                Destroy(playerDeadInstance, 2f);
+            }
          }
     }
 
 [ClientRpc]
-    public void RpcTakeDamage(int _amount)
+    public void RpcTakeDamage(int _amount, string _shooter)
     {
         if (isDead)
             return;
@@ -62,6 +80,12 @@ public class Player : NetworkBehaviour {
         if (currentHealth <= 0)
         {
             Die();
+            // Added by me
+            if (playerDeadInstance != null)
+                Destroy(playerDeadInstance);
+            playerDeadInstance = Instantiate(playerDeadPrefab);
+            playerDeadInstance.gameObject.GetComponent<Text>().text = "\n\n" + transform.name + " was shot and killed by " + _shooter + "!";
+            Destroy(playerDeadInstance, 2f);
         }
     }
 
@@ -87,6 +111,7 @@ public class Player : NetworkBehaviour {
     {
         yield return new WaitForSeconds(GameManager.instance.matchSettings.respawnTime);
 
+        Destroy(playerDeadInstance);
         SetDefaults();
         Transform _spawnPoint = NetworkManager.singleton.GetStartPosition();
         transform.position = _spawnPoint.position;

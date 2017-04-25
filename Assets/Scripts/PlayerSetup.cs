@@ -52,6 +52,7 @@ public class PlayerSetup : NetworkBehaviour {
             if (ui == null)
                 Debug.LogError("No PlayerUI component on PlayerUI prefab.");
             ui.SetController(GetComponent<PlayerController>());
+            ui.SetPlayer(GetComponent<Player>());
 
             // Lock the cursor
             if (Cursor.lockState != CursorLockMode.Locked)
