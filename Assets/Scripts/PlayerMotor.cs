@@ -51,6 +51,10 @@ public class PlayerMotor : MonoBehaviour {
     void FixedUpdate()
     {
         PerformMovement();
+    }
+
+    void Update()
+    {
         PerformRotation();
     }
 

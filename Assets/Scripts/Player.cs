@@ -33,8 +33,8 @@ public class Player : NetworkBehaviour {
         SetDefaults();
     }
 
-    //void Update()
-    //{
+    void Update()
+    {
     //    if (!isLocalPlayer)
     //        return;
 
@@ -42,9 +42,14 @@ public class Player : NetworkBehaviour {
     //    {
     //        RpcTakeDamage(99999);
     //    }
-    //}
+         if (transform.position.y< -5f)
+         {
+            if (!isDead)
+                Die();
+         }
+    }
 
-    [ClientRpc]
+[ClientRpc]
     public void RpcTakeDamage(int _amount)
     {
         if (isDead)
@@ -87,7 +92,7 @@ public class Player : NetworkBehaviour {
         transform.position = _spawnPoint.position;
         transform.rotation = _spawnPoint.rotation;
 
-        Debug.Log(transform.name + " respawned");
+        Debug.Log(transform.name + " respawned.");
     }
 
     public void SetDefaults()
