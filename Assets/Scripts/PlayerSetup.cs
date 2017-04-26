@@ -21,9 +21,8 @@ public class PlayerSetup : NetworkBehaviour {
 
     [SerializeField]
     GameObject playerUIPrefab;
-    private GameObject playerUIInstance;
-
-    Camera sceneCamera;
+    [HideInInspector]
+    public GameObject playerUIInstance;
 
     void Start()
     {
@@ -34,12 +33,6 @@ public class PlayerSetup : NetworkBehaviour {
         }
         else
         {
-            sceneCamera = Camera.main;
-            if (sceneCamera != null)
-            {
-                sceneCamera.gameObject.SetActive(false);
-            }
-
             // Disable player graphics for local player
             SetLayerRecursively(playerGraphics, LayerMask.NameToLayer(dontDrawLayerName));
 
@@ -53,6 +46,8 @@ public class PlayerSetup : NetworkBehaviour {
                 Debug.LogError("No PlayerUI component on PlayerUI prefab.");
             ui.SetController(GetComponent<PlayerController>());
 
+            GetComponent<Player>().SetupPlayer();
+
             // Lock the cursor
             if (Cursor.lockState != CursorLockMode.Locked)
             {
@@ -60,9 +55,6 @@ public class PlayerSetup : NetworkBehaviour {
             }
 
         }
-
-        GetComponent<Player>().Setup();
-
     }
 
     void SetLayerRecursively(GameObject[] obj, int newLayer)
@@ -101,11 +93,8 @@ public class PlayerSetup : NetworkBehaviour {
     {
         Destroy(playerUIInstance);
 
-        // Re-enable the scene camera
-        if (sceneCamera != null)
-        {
-            sceneCamera.gameObject.SetActive(true);
-        }
+        if (isLocalPlayer)
+            GameManager.instance.SetSceneCameraActive(true);
 
         GameManager.UnRegisterPlayer(transform.name);
 
