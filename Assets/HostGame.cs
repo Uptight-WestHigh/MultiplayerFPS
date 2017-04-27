@@ -1,10 +1,14 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Networking;
 
 public class HostGame : MonoBehaviour {
 
     [SerializeField]
     private uint roomSize = 16;
+
+    [SerializeField]
+    private Button createButton;
 
     private string roomName;
 
@@ -30,7 +34,7 @@ public class HostGame : MonoBehaviour {
         {
             Debug.Log("Creating Room: " + roomName + " with " + roomSize + "max players.");
             networkManager.matchMaker.CreateMatch(roomName, roomSize, true, "", "", "", 0, 0, networkManager.OnMatchCreate);
-
+            createButton.interactable = false;
         }
     }
 
