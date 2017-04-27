@@ -123,7 +123,7 @@ public class Player : NetworkBehaviour {
 
         // Spawn death effect
         GameObject _gfxIns  = (GameObject)Instantiate(deathEffect, transform.position, Quaternion.identity);
-        Destroy(_gfxIns, 3f);
+        Destroy(_gfxIns, 1f);
 
         // Switch cameras
         if (isLocalPlayer)
@@ -176,7 +176,7 @@ public class Player : NetworkBehaviour {
 
         // Create spawn effect
         GameObject _gfxIns = (GameObject)Instantiate(spawnEffect, transform.position, Quaternion.identity);
-        Destroy(_gfxIns, 3f);
+        Destroy(_gfxIns, 1f);
     }
 
 }
